@@ -8,6 +8,7 @@ from ukrainian_word_stress.tags import TAGS, decompress_tags
 
 import marisa_trie
 import stanza
+import ukrainian_accentor as accentor
 
 
 log = logging.getLogger(__name__)
@@ -51,10 +52,8 @@ class Stressifier:
 
 
 
-    def __init__(self,
-                 stress_symbol=StressSymbol.AcuteAccent,
-                 on_ambiguity=OnAmbiguity.Skip):
-
+    def __init__(self, on_ambiguity=OnAmbiguity.Skip):
+        stress_symbol=StressSymbol.AcuteAccent
         dict_path = pkg_resources.files('ukrainian_word_stress').joinpath('data/stress.trie')
         
         self.dict = marisa_trie.BytesTrie()
@@ -75,7 +74,9 @@ class Stressifier:
         for token in parsed.iter_tokens():
             accents = find_accent_positions(self.dict, token.to_dict()[0], self.on_ambiguity)
             accented_token = self._apply_accent_positions(token.text, accents)
-            if accented_token != token:
+            if accented_token == token.text:
+                accented_token = accentor.process(accented_token, mode='stress')
+            if accented_token != token.text:
                 result.replace(token.start_char, token.end_char, accented_token)
 
         return result.get_edited_text()
