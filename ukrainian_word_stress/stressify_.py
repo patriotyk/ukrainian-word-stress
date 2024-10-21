@@ -53,7 +53,7 @@ class Stressifier:
 
 
     def __init__(self, on_ambiguity=OnAmbiguity.Skip):
-        stress_symbol=StressSymbol.AcuteAccent
+        stress_symbol=StressSymbol.CombiningAcuteAccent
         dict_path = pkg_resources.files('ukrainian_word_stress').joinpath('data/stress.trie')
         
         self.dict = marisa_trie.BytesTrie()
